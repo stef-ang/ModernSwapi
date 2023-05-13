@@ -1,11 +1,14 @@
 package com.stefang.modern.swapi.feature.startwars
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.stefang.modern.swapi.core.data.ResponseModel
 import com.stefang.modern.swapi.core.data.model.PeopleModel
 import com.stefang.modern.swapi.core.ui.DeepPurple500
 import com.stefang.modern.swapi.core.ui.MyApplicationTheme
@@ -30,61 +34,79 @@ fun PeopleDetailRoute(
     viewModel: PeopleDetailViewModel = hiltViewModel()
 ) {
     val peopleModel by viewModel.people.collectAsStateWithLifecycle()
-    val films by viewModel.films.collectAsStateWithLifecycle()
-    val species by viewModel.species.collectAsStateWithLifecycle()
-    val starships by viewModel.starships.collectAsStateWithLifecycle()
-    val vehicles by viewModel.vehicles.collectAsStateWithLifecycle()
+    val filmsModel by viewModel.films.collectAsStateWithLifecycle()
+    val speciesModel by viewModel.species.collectAsStateWithLifecycle()
+    val starshipsModel by viewModel.starships.collectAsStateWithLifecycle()
+    val vehiclesModel by viewModel.vehicles.collectAsStateWithLifecycle()
 
     LaunchedEffect(url) {
         url?.let(viewModel::fetchDetail)
     }
 
     LaunchedEffect(peopleModel) {
-        viewModel.fetchAttributes(peopleModel)
+        (peopleModel as? ResponseModel.Success<*>)?.let {
+            viewModel.fetchAttributes(it.data as? PeopleModel)
+        }
     }
 
-    peopleModel?.let { people ->
-        ScaffoldScreen(
-            title = title
-        ) {
-            Column(modifier = Modifier.padding(start = 16.dp, top = it.calculateTopPadding(), end = 16.dp)) {
-                PeopleDetailScreen(people, films, species, starships, vehicles)
-            }
+    ScaffoldScreen(
+        title = title
+    ) {
+        Column(modifier = Modifier.padding(start = 16.dp, top = it.calculateTopPadding(), end = 16.dp)) {
+            PeopleDetailScreen(peopleModel, filmsModel, speciesModel, starshipsModel, vehiclesModel)
         }
     }
 }
 
 @Composable
 fun PeopleDetailScreen(
-    peopleModel: PeopleModel,
-    films: String,
-    species: String,
-    starships: String,
-    vehicles: String
+    peopleModel: ResponseModel<PeopleModel>,
+    filmsModel: ResponseModel<String>,
+    speciesModel: ResponseModel<String>,
+    starshipsModel: ResponseModel<String>,
+    vehiclesModel: ResponseModel<String>
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth()
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
     ) {
-        RowField("Name:", peopleModel.name)
-        Row {
-            RowField("Height:", peopleModel.height)
-            Spacer(modifier = Modifier.size(16.dp))
-            RowField("Mass:", peopleModel.mass)
+        when (peopleModel) {
+            is ResponseModel.Success -> {
+                val people = peopleModel.data
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    RowField("Name:", people.name)
+                    Row {
+                        RowField("Height:", people.height)
+                        Spacer(modifier = Modifier.size(16.dp))
+                        RowField("Mass:", people.mass)
+                    }
+                    Text(text = "Color")
+                    Row {
+                        RowField("Hair:", people.hair_color)
+                        Spacer(modifier = Modifier.size(16.dp))
+                        RowField("Skin:", people.skin_color)
+                        Spacer(modifier = Modifier.size(16.dp))
+                        RowField("Eye:", people.eye_color)
+                    }
+                    RowField("Gender:", people.gender)
+                    RowField("Birth Year:", people.birth_year)
+                    ColumnField("Films:", filmsModel)
+                    ColumnField("Species:", speciesModel)
+                    ColumnField("Starships:", starshipsModel)
+                    ColumnField("Vehicles:", vehiclesModel)
+                }
+            }
+            is ResponseModel.Loading -> CircularProgressIndicator()
+            is ResponseModel.Error -> {
+                Text(
+                    text = "Error: ${peopleModel.message}",
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+            else -> Text(peopleModel.message)
         }
-        Text(text = "Color")
-        Row {
-            RowField("Hair:", peopleModel.hair_color)
-            Spacer(modifier = Modifier.size(16.dp))
-            RowField("Skin:", peopleModel.skin_color)
-            Spacer(modifier = Modifier.size(16.dp))
-            RowField("Eye:", peopleModel.eye_color)
-        }
-        RowField("Gender:", peopleModel.gender)
-        RowField("Birth Year:", peopleModel.birth_year)
-        ColumnField("Films:", films)
-        ColumnField("Species:", species)
-        ColumnField("Starships:", starships)
-        ColumnField("Vehicles:", vehicles)
     }
 }
 
@@ -105,14 +127,26 @@ private fun RowField(label: String, value: String) {
 }
 
 @Composable
-private fun ColumnField(label: String, value: String) {
+private fun ColumnField(label: String, responseModel: ResponseModel<String>) {
     Column(modifier = Modifier.padding(bottom = 12.dp)) {
         Text(text = label)
-        Text(
-            text = value.ifBlank { "-" },
-            color = DeepPurple500,
-            fontWeight = FontWeight.SemiBold,
-        )
+        when (responseModel) {
+            is ResponseModel.Success -> {
+                Text(
+                    text = responseModel.data.ifBlank { "-" },
+                    color = DeepPurple500,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+            is ResponseModel.Loading -> CircularProgressIndicator()
+            is ResponseModel.Error -> {
+                Text(
+                    text = "Error: ${responseModel.message}",
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+            else -> Text(responseModel.message)
+        }
     }
 }
 
@@ -121,26 +155,28 @@ private fun ColumnField(label: String, value: String) {
 private fun DefaultPreview() {
     MyApplicationTheme {
         PeopleDetailScreen(
-            PeopleModel(
-                name = "Ki-Adi-Mundi",
-                height = "198",
-                mass = "82",
-                hair_color = "white",
-                skin_color = "pale",
-                eye_color = "yellow",
-                birth_year = "92BBY",
-                gender = "male",
-                homeworld = "https://swapi.dev/api/planets/43/",
-                films = emptyList(),
-                species = emptyList(),
-                vehicles = emptyList(),
-                starships = emptyList(),
-                url = "https://swapi.dev/api/people/52/"
+            ResponseModel.Success(
+                PeopleModel(
+                    name = "Ki-Adi-Mundi",
+                    height = "198",
+                    mass = "82",
+                    hair_color = "white",
+                    skin_color = "pale",
+                    eye_color = "yellow",
+                    birth_year = "92BBY",
+                    gender = "male",
+                    homeworld = "https://swapi.dev/api/planets/43/",
+                    films = emptyList(),
+                    species = emptyList(),
+                    vehicles = emptyList(),
+                    starships = emptyList(),
+                    url = "https://swapi.dev/api/people/52/"
+                )
             ),
-            "Film 1, Film 2, Film 3",
-            "Species 1, Species 2, Species 3",
-            "Starship 1, Starship 2, Starship 3",
-            "Vehicle 1, Vehicle 2, Vehicle 3",
+            ResponseModel.Success("Film 1, Film 2, Film 3"),
+            ResponseModel.Success("Species 1, Species 2, Species 3"),
+            ResponseModel.Success("Starship 1, Starship 2, Starship 3"),
+            ResponseModel.Success("Vehicle 1, Vehicle 2, Vehicle 3"),
         )
     }
 }
