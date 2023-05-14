@@ -1,5 +1,3 @@
-![](cover.jpeg)
-
 # ModernSwapi
 
 > Simple Android app with Modern Android Development practice with swapi api
