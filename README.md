@@ -2,77 +2,41 @@
 
 # ModernSwapi
 
-![buildStatus](https://img.shields.io/github/workflow/status/stef-ang/ModernSwapi/Java%20CI%20with%20Gradle?style=plastic)
-![latestVersion](https://img.shields.io/github/v/release/stef-ang/ModernSwapi)
-<a href="https://twitter.com/@Stef_Anggara" target="_blank">
-<img alt="Twitter: @Stef_Anggara" src="https://img.shields.io/twitter/follow/@Stef_Anggara.svg?style=social" />
-</a>
-
-> Simple Modern Native Android Development
+> Simple Android app with Modern Android Development practice with swapi api
 
 ### ✨ Demo
 
-![](demo.gif)
+PeopleList | PeopleDetail
+--- | ---
+![PeopleList](https://github.com/stef-ang/ModernSwapi/assets/6779288/93255102-e207-4179-9cf9-74b749bcbb82) | ![PeopleDetail](https://github.com/stef-ang/ModernSwapi/assets/6779288/6d45c89f-b6e1-49ff-9a71-f1cbd3ca8c3f)
 
-## 🦿 Prerequisites
+This app only has two screens: List of people screen and detail of people screen. The data source comes from [Swapi Api](https://swapi.dev/documentation).
+This project is my playground to explore Modern Android Development practice.
 
-- Java 8 or above
+## 📚 Stacks
 
-## ⌨️ Usage
+- [Coroutines](https://developer.android.com/kotlin/coroutines) - Performing asynchronous code with sequential manner.
+- [Kotlin Flow](https://developer.android.com/kotlin/flow) - Reactive streams based on coroutines that can emit multiple values sequentially.
+- [Dagger Hilt](https://developer.android.com/training/dependency-injection/hilt-android) - The DI framework which reduces the boilerplate.
+- [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) - Presenter with its semi data persistence behavior.
+- [Jetpack Compose](https://developer.android.com/jetpack/compose) - Android modern toolkit for building native UI.
+- [Compose Material 3](https://developer.android.com/jetpack/compose/designsystems/material3) - Helping me present Material Design.
+- [Compose Navigation Component](https://developer.android.com/jetpack/compose/navigation) - For single-activity architecture with Compose.
+- [Compose Paging 3](https://developer.android.com/jetpack/androidx/releases/paging) - Helping me manage pagination with ease.
+- [Retrofit](https://square.github.io/retrofit/) - A type-safe HTTP client for Android.
 
-1. Step 1
-1. Step 2
-1. Step 3
+## 📐 Architecture and Design Principles
 
-
-## 🏗 Project Status
-
-|![](https://i.giphy.com/media/7Sk1DclBgQoVyGCSPx/giphy.gif) |
-|:--:|
-| Under construction |
+This app adopts [MVVM](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel) with [Unidirectional flow (UDF)](https://en.wikipedia.org/wiki/Unidirectional_Data_Flow_(computer_science)) pattern. It follows [S.O.L.I.D](https://en.wikipedia.org/wiki/SOLID) and [The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) to achieve maintainable, scalable and testable code base. Also the code base has been structured in multi-module project.
 
 ## ✍️ Author
 
 👤 **Stefanus Anggara**
 
-* Twitter: <a href="https://twitter.com/@Stef_Anggara" target="_blank">@@Stef_Anggara</a>
+* Twitter: <a href="https://twitter.com/Stef_Anggara" target="_blank"><img alt="Twitter: Stef_Anggara" src="https://img.shields.io/twitter/follow/Stef_Anggara.svg?style=social" /></a>
 * Email: anggara.stefanus@gmail.com
 
 Feel free to ping me 😉
-
-## 🤝 Contributing
-
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any
-contributions you make are **greatly appreciated**.
-
-1. Open an issue first to discuss what you would like to change.
-1. Fork the Project
-1. Create your feature branch (`git checkout -b feature/amazing-feature`)
-1. Commit your changes (`git commit -m 'Add some amazing feature'`)
-1. Push to the branch (`git push origin feature/amazing-feature`)
-1. Open a pull request
-
-Please make sure to update tests as appropriate.
-
-## ❤ Show your support
-
-Give a ⭐️ if this project helped you!
-
-<a href="https://www.patreon.com/-">
-  <img alt="Patron Link" src="https://c5.patreon.com/external/logo/become_a_patron_button@2x.png" width="160"/>
-</a>
-
-<a href="https://www.buymeacoffee.com/-" target="_blank">
-    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="160">
-</a>
-
-<a href="https://www.paypal.me/-" target="_blank">
-    <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Donation" width="160">
-</a>
-
-## ☑️ TODO
-
-- [ ] Task 1
 
 ## 📝 License
 
